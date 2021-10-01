@@ -1,6 +1,6 @@
 SAVE_SVG_DIR <- system.file(file.path("barplot_tooltips", "svg_output"), package = "ggtips")
 
-rds_plots <- c("p1.rds", "p2.rds", "p3.rds", "gg2.rds", "gg3.rds")
+rds_plots <- c("p1.rds", "p2.rds", "p3.rds", "p4.rds", "p5.rds")
 
 lapply(seq_along(rds_plots), function(i) {
   p <- readRDS(system.file(file.path("barplot_tooltips", rds_plots[i]),

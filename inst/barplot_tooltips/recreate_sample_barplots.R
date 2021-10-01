@@ -33,13 +33,13 @@ lapply(seq_along(singlelayers), function(i) {
   })
 
   names(single_tooltips)[names(single_tooltips) == "rect"] <- "bar"
-  jsonlite::write_json(single_tooltips, path = file.path(SAVE_DIR, paste0("singlelayer_", i, ".json")))
+  jsonlite::write_json(single_tooltips, path = file.path(SAVE_DIR, paste0("p", i, ".json")))
 })
 
 
 #### multilayer plot
 
-multilayers <- c("gg2.rds", "gg3.rds")
+multilayers <- c("p4.rds", "p5.rds")
 
 lapply(seq_along(multilayers), function(i) {
   p <- readRDS(system.file(file.path("barplot_tooltips", multilayers[i]),
@@ -68,5 +68,6 @@ lapply(seq_along(multilayers), function(i) {
   })
 
   names(multi_tooltips)[names(multi_tooltips) == "rect"] <- "bar"
-  jsonlite::write_json(multi_tooltips, path = file.path(SAVE_DIR, paste0("multilayer_", i, ".json")))
+  jsonlite::write_json(multi_tooltips,
+  path = file.path(SAVE_DIR, paste0("p", i + length(singlelayers), ".json")))
 })
