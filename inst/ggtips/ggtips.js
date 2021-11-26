@@ -188,8 +188,8 @@ if (typeof jQuery === 'undefined') {
             };
         });
         return {
-            coordX: (points[0].x + points[1].x + points[2].x) / 3,
-            coordY: (points[0].y + points[1].y + points[2].y) / 3
+            x: (points[0].x + points[1].x + points[2].x) / 3,
+            y: (points[0].y + points[1].y + points[2].y) / 3
         };
     }
 
@@ -209,8 +209,8 @@ if (typeof jQuery === 'undefined') {
     var getRectCoords = widthViewbox(function($element, viewbox) {
         var box = $element[0].getBBox();
         return {
-            coordX: box.x / viewbox.width,
-            coordY: box.y / viewbox.height
+            x: box.x / viewbox.width,
+            y: box.y / viewbox.height
         };
     });
 
@@ -222,8 +222,8 @@ if (typeof jQuery === 'undefined') {
             cy = +$e.attr('cy');
         } else if ($e.is(':triangle')) {
             point = triangleCenter($e);
-            point.coordX /= viewbox.width;
-            point.coordY /= viewbox.height;
+            point.x /= viewbox.width;
+            point.y /= viewbox.height;
             return point;
         } else if ($e.is('rect,line,:diamond,polygon')) {
             var box = $e[0].getBBox();
@@ -232,8 +232,8 @@ if (typeof jQuery === 'undefined') {
         }
         if (typeof cx !== 'undefined' && typeof cy !== 'undefined') {
             return {
-                coordX: cx / viewbox.width,
-                coordY: cy / viewbox.height
+                x: cx / viewbox.width,
+                y: cy / viewbox.height
             };
         }
     });
@@ -248,8 +248,8 @@ if (typeof jQuery === 'undefined') {
             }
             if (typeof center !== 'undefined') {
                 return {
-                    coordX: center.x / v.width,
-                    coordY: center.y / v.height
+                    x: center.x / v.width,
+                    y: center.y / v.height
                 };
             }
         } else {
@@ -275,8 +275,8 @@ if (typeof jQuery === 'undefined') {
         function square(x) {
             return x*x;
         }
-        return Math.sqrt(square(a.coordX - b.coordX) +
-                         square(a.coordY - b.coordY));
+        return Math.sqrt(square(a.x - b.x) +
+                         square(a.y - b.y));
     }
     // -------------------------------------------------------------------------
     function findData(points_array, point, tolerance) {

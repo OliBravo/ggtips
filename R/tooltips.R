@@ -29,7 +29,7 @@
 #' and layers.
 #' Each element of the list is a data frame with HTML-formatted tooltip
 #' contents (column `tooltip`) and coordinates relative to the size of
-#' the image (`coordX` and `coordY`).
+#' the image (`x` and `y`).
 #'
 #' @param plot A \link{ggplot} object.
 #' @param g A gtable object compiled from the plot (see \link{arrangeGrob}).
@@ -104,8 +104,8 @@ getTooltips <- function(plot,
       if (is.null(coords)) {
         NULL
       } else {
-        coords$coordX <- coords$coordX / plotWidth
-        coords$coordY <- 1 - coords$coordY / plotHeight
+        coords$x <- coords$x / plotWidth
+        coords$y <- 1 - coords$y / plotHeight
         cbind(tooltip = tooltipContents, coords)
       }
     },
