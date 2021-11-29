@@ -5,13 +5,24 @@ library(dplyr)
 # where do you want the resulting json files to be stored
 SAVE_DIR <- system.file(file.path("barplot_tooltips", "json_output"), package = "ggtips")
 
-singlelayers <- c("p1.rds", "p2.rds", "p3.rds")
+singlelayers <- c("gg1.rds", "gg2.rds", "gg3.rds")
 
-lapply(seq_along(singlelayers), function(i) {
-  p <- readRDS(system.file(file.path("barplot_tooltips", singlelayers[i]),
-                           package = "ggtips"))
+tootips_for_charts <- lapply(seq_along(singlelayers), function(i) {
+  p <- readRDS(singlelayers[i])
+  p <- p$plot
   varDict <- list(Species = "Species")
+
   gt <- gridExtra::grid.arrange(p)[[1]][[1]]
+  panel_idx <- grep(pattern = "panel", x = gt$grobs)
+
+  fills <- lapply(panel_idx, function(p) {
+    grob_children <- gt$grobs[[p]]$children
+    rect_idx <- grep(pattern = "\\.rect\\.", x = names(grob_children))
+    grob_children[[rect_idx]]$gp$fill
+  })
+  fills <- unlist(fills)
+
+  print(fills)
 
   tooltips <- ggtips:::getTooltips(
     plot = p,
@@ -22,52 +33,28 @@ lapply(seq_along(singlelayers), function(i) {
     addAttributes = TRUE
   )
 
-  single_tooltips <- purrr::imap(tooltips, ~{
-    type <- switch (.y,
-                    "rect" = "bar",
-                    "points" = "points"
-    )
+  nms <- names(tooltips)
+  nms <- gsub(pattern = "rect", x = nms, replacement = "bars")
+  names(tooltips) <- nms
 
-    .x[[1]]$type <- type
-    .x[[1]]
+  tooltips <- lapply(nms, function(n) {
+    d <- tooltips[[n]][[1]]
+    if (n == "bars") {
+      tooltips[[n]]$colors <- fills
+      tooltips[[n]]$data <- d
+      tooltips[[n]][[1]] <- NULL
+      return(tooltips[[n]])
+    }
+    d
   })
+  names(tooltips) <- nms
 
-  names(single_tooltips)[names(single_tooltips) == "rect"] <- "bar"
-  jsonlite::write_json(single_tooltips, path = file.path(SAVE_DIR, paste0("p", i, ".json")))
-})
-
-
-#### multilayer plot
-
-multilayers <- c("p4.rds", "p5.rds")
-
-lapply(seq_along(multilayers), function(i) {
-  p <- readRDS(system.file(file.path("barplot_tooltips", multilayers[i]),
-                           package = "ggtips"))
-  varDict <- list(Species = "Species")
-  gt <- gridExtra::grid.arrange(p$plot)[[1]][[1]]
-
-  tooltips <- ggtips:::getTooltips(
-    plot = p$plot,
-    varDict = varDict,
-    plotScales = NULL,
-    g = gt,
-    callback = NULL,
-    addAttributes = TRUE
+  jsonlite::write_json(
+    tooltips,
+    path = file.path("output", paste0("tooltips", i, ".json")),
+    auto_unbox = TRUE
   )
+  ggplot2::ggsave(file=file.path("output", paste0("tooltips", i, ".svg")), plot=p)
+
   tooltips
-
-  multi_tooltips <- purrr::imap(tooltips, ~{
-    type <- switch (.y,
-                    "rect" = "bar",
-                    "points" = "points"
-    )
-
-    .x[[1]]$type <- type
-    .x[[1]]
-  })
-
-  names(multi_tooltips)[names(multi_tooltips) == "rect"] <- "bar"
-  jsonlite::write_json(multi_tooltips,
-  path = file.path(SAVE_DIR, paste0("p", i + length(singlelayers), ".json")))
 })
