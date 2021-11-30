@@ -22,8 +22,6 @@ tootips_for_charts <- lapply(seq_along(singlelayers), function(i) {
   })
   fills <- unlist(fills)
 
-  print(fills)
-
   tooltips <- ggtips:::getTooltips(
     plot = p,
     varDict = varDict,
